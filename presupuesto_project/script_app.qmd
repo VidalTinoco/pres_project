@@ -31,6 +31,9 @@ library(tidyr)
 library(tidyverse)
 library(here)
 library(readr)
+library(stringi)
+library(treemap)
+library(viridis)
 ```
 
 
@@ -42,4 +45,114 @@ pef <- read_csv(here("data", "pef_mich.csv"))
 summary(pef)
 pef
 ```
+
+```{r quitamos acentos, echo=FALSE, eval=TRUE}
+pef$DESC_FUNCION = stri_trans_general(str = pef$DESC_FUNCION, id = "Latin-ASCII")
+sort(unique(pef$DESC_FUNCION))
+
+pef$DESC_RAMO = stri_trans_general(str = pef$DESC_RAMO, id = "Latin-ASCII")
+
+pef$DESC_UR = stri_trans_general(str = pef$DESC_UR, id = "Latin-ASCII")
+
+pef$DESC_GPO_FUNCIONAL = stri_trans_general(str = pef$DESC_GPO_FUNCIONAL, id = "Latin-ASCII")
+
+pef$DESC_SUBFUNCION = stri_trans_general(str = pef$DESC_SUBFUNCION, id = "Latin-ASCII")
+
+pef$DESC_AI = stri_trans_general(str = pef$DESC_AI, id = "Latin-ASCII")
+
+pef$DESC_MODALIDAD = stri_trans_general(str = pef$DESC_MODALIDAD, id = "Latin-ASCII")
+
+pef$DESC_PP = stri_trans_general(str = pef$DESC_PP, id = "Latin-ASCII")
+
+pef$DESC_CAPITULO = stri_trans_general(str = pef$DESC_CAPITULO, id = "Latin-ASCII")
+
+pef$DESC_CONCEPTO = stri_trans_general(str = pef$DESC_CONCEPTO, id = "Latin-ASCII")
+
+pef$DESC_PARTIDA_GENERICA = stri_trans_general(str = pef$DESC_PARTIDA_GENERICA, id = "Latin-ASCII")
+
+pef$DESC_PARTIDA_ESPECIFICA = stri_trans_general(str = pef$DESC_PARTIDA_ESPECIFICA, id = "Latin-ASCII")
+
+pef$DESC_TIPOGASTO = stri_trans_general(str = pef$DESC_TIPOGASTO, id = "Latin-ASCII")
+
+pef$DESC_FF = stri_trans_general(str = pef$DESC_FF, id = "Latin-ASCII")
+
+pef$DESC_ENTIDAD_FEDERATIVA = stri_trans_general(str = pef$DESC_ENTIDAD_FEDERATIVA, id = "Latin-ASCII")
+
+```
+
+```{r convertimos a factor, echo=FALSE, eval=TRUE}
+pef
+summary(pef)
+pef <- pef %>% 
+  mutate(DESC_RAMO = factor(DESC_RAMO),
+         DESC_UR = factor(DESC_UR),
+         DESC_GPO_FUNCIONAL = factor(DESC_GPO_FUNCIONAL),
+         DESC_FUNCION = factor(DESC_FUNCION),
+         DESC_SUBFUNCION = factor(DESC_SUBFUNCION),
+         DESC_AI = factor(DESC_AI),
+         DESC_MODALIDAD = factor(DESC_MODALIDAD),
+         DESC_PP = factor(DESC_PP),
+         DESC_CAPITULO = factor(DESC_CAPITULO),
+         DESC_CONCEPTO = factor(DESC_CONCEPTO),
+         DESC_PARTIDA_GENERICA = factor(DESC_PARTIDA_GENERICA),
+         DESC_PARTIDA_ESPECIFICA = factor(DESC_PARTIDA_ESPECIFICA),
+         DESC_TIPOGASTO = factor(DESC_TIPOGASTO),
+         DESC_FF = factor(DESC_FF),
+         DESC_ENTIDAD_FEDERATIVA = factor(DESC_ENTIDAD_FEDERATIVA)
+         )
+summary(pef)
+
+colnames(pef)
+```
+
+```{r treemap, echo=FALSE, eval=TRUE}
+### primero convertimos monto a numeric
+pef <- pef %>% 
+  mutate(MONTO_PEF_2023 = as.numeric(MONTO_PEF_2023))
+summary(pef)
+
+### cargamos el plot
+prueba <- treemap(pef,
+                  index=c("DESC_RAMO","DESC_UR"),
+            vSize="MONTO_PEF_2023",
+            type="index") ### jalo
+
+### hacemos otro plot con mas subgrupos
+prueba <- treemap(pef,
+                  index=c("DESC_RAMO","DESC_UR", "DESC_GPO_FUNCIONAL"),
+            vSize="MONTO_PEF_2023",
+            type="index") ### creo que jalo
+
+### la ponemos wapa
+p <- treemap(pef,
+            
+            # data
+            index=c("DESC_RAMO",
+                    "DESC_UR", 
+                    "DESC_GPO_FUNCIONAL"),
+            vSize="MONTO_PEF_2023",
+            type="index",
+            
+            # Main
+            title="",
+            #palette="volcanoe",
+
+            # Borders:
+            border.col=c("black", "grey", "grey"),             
+            border.lwds=c(1,0.5,0.1),                         
+        
+            # Labels
+             fontsize.labels=c(0.7, 0.4, 0.3),
+             fontcolor.labels=c("white", "white", "black"),
+             fontface.labels=1,            
+             bg.labels=c("transparent"),              
+            # align.labels=list( c("center", "center"), c("left", "top"), c("right", "bottom")),                                  
+            # overlap.labels=0.5#, inflate.labels=T   
+            
+)
+```
+
+
+
+
 
