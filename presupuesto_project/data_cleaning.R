@@ -31,10 +31,10 @@ sort(unique(anexos$ENTIDAD_FEDERATIVA)) # Michoac\xe1n
 
 ### filtramos edo de interes (mich)
 pef_mich <- pef %>% 
-  filter(DESC_ENTIDAD_FEDERATIVA == "Michoac\xe1n")
+  filter(ID_ENTIDAD_FEDERATIVA == 16)
 
 anexos_mich <- anexos %>% 
-  filter(ENTIDAD_FEDERATIVA == "Michoac\xe1n")
+  filter(ID_ENTIDAD_FEDERATIVA == 16)
 
 ### descargamos csv
 write_csv(pef_mich, "pef_mich.csv")
